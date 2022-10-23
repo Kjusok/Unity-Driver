@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class CarController : MonoBehaviour
     [SerializeField] private ParticleSystem[] _tireSmokeEffects;
     [SerializeField] private GameObject _nitroEffects;
     [SerializeField] private Transform _centerOfMass;
+    [SerializeField] private Text _speedometer;
 
     private Rigidbody _rb;
     private float _lastRotationY;
@@ -18,6 +20,8 @@ public class CarController : MonoBehaviour
 
     private const float _maxSpeedForSmokeOnStart = 12f;
     private const float _minSpeedForSmokeOnStart = 3f;
+    private const float _correctionSpeed = 2.7f;
+    private const float _limitForSteerHelpAssist = 10f;
 
 
     private void Start()
@@ -36,23 +40,6 @@ public class CarController : MonoBehaviour
         _onGround = true;
     }
 
-    private void SteerHelpAssist()
-    {
-        if (!_onGround)
-        {
-            return;
-        }
-
-        if (Mathf.Abs(transform.rotation.eulerAngles.y - _lastRotationY) < 10f)
-        {
-            float turnAdjust = (transform.rotation.eulerAngles.y - _lastRotationY) * _helpValue;
-            Quaternion rotateHelp = Quaternion.AngleAxis(turnAdjust, Vector3.up);
-            _rb.velocity = rotateHelp * _rb.velocity;
-        }
-
-        _lastRotationY = transform.rotation.eulerAngles.y;
-    }
-
     private void CreateVectorForce()
     {
         var vertical = Input.GetAxis("Vertical");
@@ -66,6 +53,41 @@ public class CarController : MonoBehaviour
         _movementVector = new Vector3(vertical * sin, -sinZ * vertical, vertical * cos);
     }
 
+    private void ApplyForceToMovementCar()
+    {
+        if (_onGround)
+        {
+            _rb.AddForce(_movementVector * _speed, ForceMode.Impulse);
+        }
+    }
+
+    private void SteerHelpAssist()
+    {
+        if (!_onGround)
+        {
+            return;
+        }
+
+        if (Mathf.Abs(transform.rotation.eulerAngles.y - _lastRotationY) < _limitForSteerHelpAssist)
+        {
+            float turnAdjust = (transform.rotation.eulerAngles.y - _lastRotationY) * _helpValue;
+            Quaternion rotateHelp = Quaternion.AngleAxis(turnAdjust, Vector3.up);
+            _rb.velocity = rotateHelp * _rb.velocity;
+        }
+
+        _lastRotationY = transform.rotation.eulerAngles.y;
+    }
+   
+    private void Rotation()
+    {
+        var horizontal = Input.GetAxis("Horizontal");
+
+        if (_rb.velocity.sqrMagnitude > 1 && _onGround)
+        {
+            transform.Rotate(0.0f, horizontal * _speedRotation, 0.0f, Space.World);
+        }
+    }
+
     private void NitroEffects()
     {
         if (Input.GetKey(KeyCode.UpArrow))
@@ -77,30 +99,11 @@ public class CarController : MonoBehaviour
             _nitroEffects.SetActive(false);
         }
     }
-    private void Rotation()
-    {
-        var horizontal = Input.GetAxis("Horizontal");
-
-        if (_rb.velocity.sqrMagnitude > 1 && _onGround)
-        {
-            transform.Rotate(0.0f, horizontal * _speedRotation, 0.0f, Space.World);
-        }
-    }
-
-    private void AplyForceToMovementCar()
-    {
-        if (_onGround)
-        {
-            _rb.AddForce(_movementVector * _speed, ForceMode.Impulse);
-        }
-    }
 
     private void EmitSmokeFromTires()
     {
         if (_rb.velocity.magnitude > _minSpeedForSmoke && _onGround)
         {
-            SwitchSmokeParticles(true);
-
             float angel = Quaternion.Angle(Quaternion.LookRotation(_rb.velocity, Vector3.up),
                 Quaternion.LookRotation(transform.forward,
                 Vector3.up));
@@ -131,13 +134,19 @@ public class CarController : MonoBehaviour
         }
     }
 
-    private void SwitchSmokeParticles (bool _enable)
+    private void SwitchSmokeParticles(bool _enable)
     {
-        foreach(ParticleSystem ps in _tireSmokeEffects)
+        foreach (ParticleSystem ps in _tireSmokeEffects)
         {
             ParticleSystem.EmissionModule psEm = ps.emission;
             psEm.enabled = _enable;
         }
+    }
+
+    private void Speedometer()
+    {
+        var speed = Mathf.Round(_rb.velocity.magnitude * _correctionSpeed);
+        _speedometer.text = speed.ToString();
     }
 
     private void FixedUpdate()
@@ -146,8 +155,9 @@ public class CarController : MonoBehaviour
         EmitSmokeFromTires();
         SmokeFromTiresOnStart();
         Rotation();
-        AplyForceToMovementCar();
+        ApplyForceToMovementCar();
         SteerHelpAssist();
         NitroEffects();
+        Speedometer();
     }
 }
