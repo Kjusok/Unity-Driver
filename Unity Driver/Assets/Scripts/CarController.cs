@@ -9,6 +9,7 @@ public class CarController : MonoBehaviour
     [SerializeField] private float _minAngelForSmoke;
     [SerializeField] private ParticleSystem[] _tireSmokeEffects;
     [SerializeField] private GameObject _nitroEffects;
+    [SerializeField] private Transform _centerOfMass;
 
     private Rigidbody _rb;
     private float _lastRotationY;
@@ -22,7 +23,7 @@ public class CarController : MonoBehaviour
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        _rb.centerOfMass = _centerOfMass.localPosition;
     }
 
     private void OnCollisionExit(Collision other)
@@ -57,10 +58,12 @@ public class CarController : MonoBehaviour
         var vertical = Input.GetAxis("Vertical");
 
         float angelY = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+        float angelZ = transform.rotation.eulerAngles.x * Mathf.Deg2Rad;
         float cos = Mathf.Cos(angelY);
         float sin = Mathf.Sin(angelY);
+        float sinZ = Mathf.Sin(angelZ);
 
-        _movementVector = new Vector3(vertical * sin, 0.0f, vertical * cos);
+        _movementVector = new Vector3(vertical * sin, -sinZ * vertical, vertical * cos);
     }
 
     private void NitroEffects()
