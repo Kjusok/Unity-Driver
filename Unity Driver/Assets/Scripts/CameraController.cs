@@ -14,14 +14,17 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        //_offset = transform.position - _playerTarget.position;
         _offset = _playerTarget.InverseTransformPoint(transform.position);
         _startRotation = transform.rotation;
     }
 
     private void FixedUpdate()
     {
-        transform.position = Vector3.Lerp(transform.position, _playerTarget.position + transform.rotation * _offset, _moveSpeed * Time.fixedDeltaTime);
-        transform.rotation = Quaternion.Lerp(transform.rotation, _playerTarget.rotation * _startRotation, _rotationSpeed * Time.fixedDeltaTime);
+        transform.position = Vector3.Lerp(transform.position,
+            _playerTarget.position + transform.rotation * _offset,
+            _moveSpeed * Time.fixedDeltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation,
+            _playerTarget.rotation * _startRotation,
+            _rotationSpeed * Time.fixedDeltaTime);
     }
 }

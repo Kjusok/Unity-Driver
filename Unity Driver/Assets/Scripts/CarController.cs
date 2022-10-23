@@ -5,11 +5,18 @@ public class CarController : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _speedRotation;
     [SerializeField] [Range(0, 1)] private float _helpValue;
+    [SerializeField] private float _minSpeedForSmoke;
+    [SerializeField] private float _minAngelForSmoke;
+    [SerializeField] private ParticleSystem[] _tireSmokeEffects;
+    [SerializeField] private GameObject _nitroEffects;
 
     private Rigidbody _rb;
     private float _lastRotationY;
     private Vector3 _movementVector;
-    public bool _onGround;
+    private bool _onGround;
+
+    private const float _maxSpeedForSmokeOnStart = 12f;
+    private const float _minSpeedForSmokeOnStart = 3f;
 
 
     private void Start()
@@ -56,6 +63,17 @@ public class CarController : MonoBehaviour
         _movementVector = new Vector3(vertical * sin, 0.0f, vertical * cos);
     }
 
+    private void NitroEffects()
+    {
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            _nitroEffects.SetActive(true);
+        }
+        else
+        {
+            _nitroEffects.SetActive(false);
+        }
+    }
     private void Rotation()
     {
         var horizontal = Input.GetAxis("Horizontal");
@@ -73,12 +91,60 @@ public class CarController : MonoBehaviour
             _rb.AddForce(_movementVector * _speed, ForceMode.Impulse);
         }
     }
-    
+
+    private void EmitSmokeFromTires()
+    {
+        if (_rb.velocity.magnitude > _minSpeedForSmoke && _onGround)
+        {
+            SwitchSmokeParticles(true);
+
+            float angel = Quaternion.Angle(Quaternion.LookRotation(_rb.velocity, Vector3.up),
+                Quaternion.LookRotation(transform.forward,
+                Vector3.up));
+
+            if (angel > _minAngelForSmoke)
+            {
+                SwitchSmokeParticles(true);
+            }
+            else
+            {
+                SwitchSmokeParticles(false);
+            }
+        }
+        else
+        {
+            SwitchSmokeParticles(false);
+        }
+    }
+
+    private void SmokeFromTiresOnStart()
+    {
+        if (_rb.velocity.magnitude < _maxSpeedForSmokeOnStart &&
+            _rb.velocity.magnitude > _minSpeedForSmokeOnStart &&
+            Input.GetKey(KeyCode.UpArrow) &&
+            _onGround)
+        {
+            SwitchSmokeParticles(true);
+        }
+    }
+
+    private void SwitchSmokeParticles (bool _enable)
+    {
+        foreach(ParticleSystem ps in _tireSmokeEffects)
+        {
+            ParticleSystem.EmissionModule psEm = ps.emission;
+            psEm.enabled = _enable;
+        }
+    }
+
     private void FixedUpdate()
     {
         CreateVectorForce();
+        EmitSmokeFromTires();
+        SmokeFromTiresOnStart();
         Rotation();
         AplyForceToMovementCar();
         SteerHelpAssist();
+        NitroEffects();
     }
 }
