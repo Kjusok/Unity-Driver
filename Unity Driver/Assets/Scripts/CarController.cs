@@ -1,10 +1,9 @@
 using UnityEngine;
 
-public class CarControler : MonoBehaviour
+public class CarController : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private float _speedRotation;
-    [SerializeField] private Camera _camera;
     [SerializeField] [Range(0, 1)] private float _helpValue;
 
     private Rigidbody _rb;
@@ -74,7 +73,7 @@ public class CarControler : MonoBehaviour
             _rb.AddForce(_movementVector * _speed, ForceMode.Impulse);
         }
     }
-
+    
     private void FixedUpdate()
     {
         CreateVectorForce();
