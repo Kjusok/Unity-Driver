@@ -3,6 +3,11 @@ using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
 {
+    private const float _maxSpeedForSmokeOnStart = 12f;
+    private const float _minSpeedForSmokeOnStart = 3f;
+    private const float _correctionSpeed = 2.7f;
+    private const float _limitForSteerHelpAssist = 10f;
+
     [SerializeField] private float _speed;
     [SerializeField] private float _speedRotation;
     [SerializeField] [Range(0, 1)] private float _helpValue;
@@ -17,11 +22,6 @@ public class CarController : MonoBehaviour
     private float _lastRotationY;
     private Vector3 _movementVector;
     private bool _onGround;
-
-    private const float _maxSpeedForSmokeOnStart = 12f;
-    private const float _minSpeedForSmokeOnStart = 3f;
-    private const float _correctionSpeed = 2.7f;
-    private const float _limitForSteerHelpAssist = 10f;
 
 
     private void Start()
@@ -38,6 +38,17 @@ public class CarController : MonoBehaviour
     private void OnCollisionStay(Collision other)
     {
         _onGround = true;
+    }
+    private void FixedUpdate()
+    {
+        CreateVectorForce();
+        EmitSmokeFromTires();
+        SmokeFromTiresOnStart();
+        Rotation();
+        ApplyForceToMovementCar();
+        SteerHelpAssist();
+        NitroEffects();
+        Speedometer();
     }
 
     private void CreateVectorForce()
@@ -90,14 +101,7 @@ public class CarController : MonoBehaviour
 
     private void NitroEffects()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            _nitroEffects.SetActive(true);
-        }
-        else
-        {
-            _nitroEffects.SetActive(false);
-        }
+            _nitroEffects.SetActive(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W));
     }
 
     private void EmitSmokeFromTires()
@@ -108,14 +112,7 @@ public class CarController : MonoBehaviour
                 Quaternion.LookRotation(transform.forward,
                 Vector3.up));
 
-            if (angel > _minAngelForSmoke)
-            {
-                SwitchSmokeParticles(true);
-            }
-            else
-            {
-                SwitchSmokeParticles(false);
-            }
+                SwitchSmokeParticles(angel > _minAngelForSmoke);
         }
         else
         {
@@ -127,19 +124,19 @@ public class CarController : MonoBehaviour
     {
         if (_rb.velocity.magnitude < _maxSpeedForSmokeOnStart &&
             _rb.velocity.magnitude > _minSpeedForSmokeOnStart &&
-            Input.GetKey(KeyCode.UpArrow) &&
+            (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) &&
             _onGround)
         {
             SwitchSmokeParticles(true);
         }
     }
 
-    private void SwitchSmokeParticles(bool _enable)
+    private void SwitchSmokeParticles(bool enable)
     {
-        foreach (ParticleSystem ps in _tireSmokeEffects)
+        foreach (ParticleSystem particle in _tireSmokeEffects)
         {
-            ParticleSystem.EmissionModule psEm = ps.emission;
-            psEm.enabled = _enable;
+            ParticleSystem.EmissionModule ParticleSysEmissionModule = particle.emission;
+            ParticleSysEmissionModule.enabled = enable;
         }
     }
 
@@ -147,17 +144,5 @@ public class CarController : MonoBehaviour
     {
         var speed = Mathf.Round(_rb.velocity.magnitude * _correctionSpeed);
         _speedometer.text = speed.ToString();
-    }
-
-    private void FixedUpdate()
-    {
-        CreateVectorForce();
-        EmitSmokeFromTires();
-        SmokeFromTiresOnStart();
-        Rotation();
-        ApplyForceToMovementCar();
-        SteerHelpAssist();
-        NitroEffects();
-        Speedometer();
     }
 }
