@@ -31044,7 +31044,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 300
-  _speedRotation: 1
+  _speedRotation: 1.5
   _helpValue: 0.7
   _minSpeedForSmoke: 10
   _minAngelForSmoke: 15

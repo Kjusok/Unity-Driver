@@ -39,6 +39,16 @@ public class CarController : MonoBehaviour
     {
         _onGround = true;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        var finish = other.GetComponent<Finish>();
+
+        if (finish)
+        {
+            GameManager.Instance.CurrentLap();
+        }
+    }
     private void FixedUpdate()
     {
         CreateVectorForce();
