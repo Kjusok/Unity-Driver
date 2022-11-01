@@ -46,11 +46,16 @@ public class CarController : MonoBehaviour
 
         if (finish)
         {
-            GameManager.Instance.CurrentLap();
+            GameManager.Instance.AddCurrentLap();
         }
     }
     private void FixedUpdate()
     {
+        if (GameManager.Instance.GameIsPaused)
+        {
+            return;
+        }
+
         CreateVectorForce();
         EmitSmokeFromTires();
         SmokeFromTiresOnStart();

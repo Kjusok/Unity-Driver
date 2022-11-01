@@ -20,6 +20,11 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GameManager.Instance.GameIsPaused)
+        {
+            return;
+        }
+
         transform.position = Vector3.Lerp(transform.position,
             _playerTarget.position + transform.rotation * _offset,
             _moveSpeed * Time.fixedDeltaTime);
