@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
+
 {
     private const float _maxSpeedForSmokeOnStart = 12f;
     private const float _minSpeedForSmokeOnStart = 3f;
@@ -22,6 +23,8 @@ public class CarController : MonoBehaviour
     private float _lastRotationY;
     private Vector3 _movementVector;
     private bool _onGround;
+
+    public ButtonClickChecker UpArrow;
 
 
     private void Start()
@@ -51,34 +54,21 @@ public class CarController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        EmitSmokeFromTires();
+
         if (GameManager.Instance.GameIsPaused)
         {
             return;
         }
 
-        CreateVectorForce();
-        EmitSmokeFromTires();
         SmokeFromTiresOnStart();
-        Rotation();
         ApplyForceToMovementCar();
         SteerHelpAssist();
         NitroEffects();
         Speedometer();
     }
-
-    private void CreateVectorForce()
-    {
-        var vertical = Input.GetAxis("Vertical");
-
-        float angelY = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
-        float angelZ = transform.rotation.eulerAngles.x * Mathf.Deg2Rad;
-        float cos = Mathf.Cos(angelY);
-        float sin = Mathf.Sin(angelY);
-        float sinZ = Mathf.Sin(angelZ);
-
-        _movementVector = new Vector3(vertical * sin, -sinZ * vertical, vertical * cos);
-    }
-
+   
+    
     private void ApplyForceToMovementCar()
     {
         if (_onGround)
@@ -103,20 +93,10 @@ public class CarController : MonoBehaviour
 
         _lastRotationY = transform.rotation.eulerAngles.y;
     }
-   
-    private void Rotation()
-    {
-        var horizontal = Input.GetAxis("Horizontal");
-
-        if (_rb.velocity.sqrMagnitude > 1 && _onGround)
-        {
-            transform.Rotate(0.0f, horizontal * _speedRotation, 0.0f, Space.World);
-        }
-    }
 
     private void NitroEffects()
     {
-            _nitroEffects.SetActive(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W));
+        _nitroEffects.SetActive(Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) || UpArrow.IsDown);
     }
 
     private void EmitSmokeFromTires()
@@ -127,7 +107,7 @@ public class CarController : MonoBehaviour
                 Quaternion.LookRotation(transform.forward,
                 Vector3.up));
 
-                SwitchSmokeParticles(angel > _minAngelForSmoke);
+            SwitchSmokeParticles(angel > _minAngelForSmoke);
         }
         else
         {
@@ -139,7 +119,7 @@ public class CarController : MonoBehaviour
     {
         if (_rb.velocity.magnitude < _maxSpeedForSmokeOnStart &&
             _rb.velocity.magnitude > _minSpeedForSmokeOnStart &&
-            (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) &&
+            (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) || UpArrow.IsDown) &&
             _onGround)
         {
             SwitchSmokeParticles(true);
@@ -159,5 +139,24 @@ public class CarController : MonoBehaviour
     {
         var speed = Mathf.Round(_rb.velocity.magnitude * _correctionSpeed);
         _speedometer.text = speed.ToString();
+    }
+
+    public void CreateVectorForce(float vertical)
+    {
+        float angelY = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
+        float angelZ = transform.rotation.eulerAngles.x * Mathf.Deg2Rad;
+        float cos = Mathf.Cos(angelY);
+        float sin = Mathf.Sin(angelY);
+        float sinZ = Mathf.Sin(angelZ);
+
+        _movementVector = new Vector3(vertical * sin, -sinZ * vertical, vertical * cos);
+    }
+
+    public void Rotation(float horizontal)
+    {
+        if (_rb.velocity.sqrMagnitude > 1 && _onGround)
+        {
+            transform.Rotate(0.0f, horizontal * _speedRotation, 0.0f, Space.World);
+        }
     }
 }

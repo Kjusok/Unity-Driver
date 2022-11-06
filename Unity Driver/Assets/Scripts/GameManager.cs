@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _finishTriger;
     [SerializeField] private GameObject _menuPanel;
     [SerializeField] private GameObject _newBestText;
+    [SerializeField] private GameObject _startButton;
 
     private float _currentTimeLap;
     private float _currentLap;
@@ -37,6 +38,8 @@ public class GameManager : MonoBehaviour
     private float _totalTime;
     private float _bestTime;
     private bool _isPaused;
+
+    static bool _gameIsStarted = false;
 
     public bool GameIsPaused => _isPaused;
 
@@ -48,6 +51,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _bestTime = PlayerPrefs.GetFloat("bestTime");
+
+        if (!_gameIsStarted)
+        {
+            _isPaused = true;
+            _startButton.SetActive(true);
+        }
     }
 
     private void Update()
@@ -154,9 +163,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void PressStartButton()
+    public void PressRestartButton()
     {
         SceneManager.LoadScene("MainScene");
+    }
+
+    public void PressStartButton()
+    {
+        _startButton.SetActive(false);
+        _isPaused = false;
+        _gameIsStarted = true;
     }
 
     public void AddCurrentLap()
