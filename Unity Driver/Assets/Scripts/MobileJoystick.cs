@@ -45,9 +45,9 @@ public class MobileJoystick : MonoBehaviour, IPointerUpHandler, IDragHandler, IP
     public void OnDrag(PointerEventData eventData)
     {
         Vector2 offset;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(_joystickTransform, eventData.position, null, out offset);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(_joystickTransform,  eventData.position, null, out offset);
         offset = Vector2.ClampMagnitude(offset, _dragOffsetDistance) / _dragOffsetDistance;
-        _joystickTransform.anchoredPosition = offset * _dragMovementDistance;
+        _joystickTransform.anchoredPosition = new Vector2(offset.x * _dragMovementDistance, 0);
 
         _inputVector = CalculateMovementInput(offset);
     }

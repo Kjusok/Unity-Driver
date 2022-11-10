@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
+    private const int _timeForRestartFinishTriger = 10;
     private static GameManager _instance;
 
     public static GameManager Instance
@@ -29,7 +31,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _menuPanel;
     [SerializeField] private GameObject _newBestText;
     [SerializeField] private GameObject _startButton;
+    [SerializeField] [Range(0, 6)] private int _numberOFLaps;
 
+    [SerializeField] private List<float> _lapsTime;
     private float _currentTimeLap;
     private float _currentLap;
     private float _1stLapTime;
@@ -66,7 +70,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (_currentLap >= 1 && _currentLap < 4)
+        if (_currentLap >= 1 && _currentLap < _numberOFLaps + 1)
         {
             _currentTimeLap += Time.deltaTime;
             EnebleFinishLine();
@@ -74,7 +78,7 @@ public class GameManager : MonoBehaviour
 
         if (_currentLap > 3)
         {
-            _currentLapText.text = "3/3";
+            _currentLapText.text = _numberOFLaps.ToString() + "/" + _numberOFLaps.ToString();
             _currentTimeLapText.text = _3rdLapTimeText.text;
 
             ActiveMenu();
@@ -89,7 +93,7 @@ public class GameManager : MonoBehaviour
         _isPaused = true;
     }
 
-    private void RemeberBestTime()
+    private void RememberBestTime()
     {
         if (_bestTime > _totalTime)
         {
@@ -109,6 +113,13 @@ public class GameManager : MonoBehaviour
 
     private void RememberTimeOfEachLap()
     {
+        Debug.Log(_lapsTime[_lapsTime.Count-1]);
+
+        if (_currentLap == _lapsTime.Count)
+        {
+
+        }
+
         if (_currentLap == 2)
         {
             _1stLapTime = _currentTimeLap;
@@ -130,13 +141,14 @@ public class GameManager : MonoBehaviour
 
             _totalTime += _3rdLapTime;
             UpdateTimeText(_totalTimeText, _totalTime);
-            RemeberBestTime();
+            RememberBestTime();
         }
+
     }
 
     private void EnebleFinishLine()
     {
-        if (_currentTimeLap < 10)
+        if (_currentTimeLap < _timeForRestartFinishTriger)
         {
             _finishTriger.SetActive(false);
         }
@@ -178,11 +190,13 @@ public class GameManager : MonoBehaviour
     public void AddCurrentLap()
     {
         _currentLap++;
-        _currentLapText.text = _currentLap.ToString() + "/3";
+        _currentLapText.text = _currentLap.ToString() + "/" + _numberOFLaps.ToString();
+
+        _lapsTime.Add(_currentTimeLap);
 
         RememberTimeOfEachLap();
 
-        if (_currentLap < 4)
+        if (_currentLap < _numberOFLaps + 1)
         {
             _currentTimeLap = 0;
         }

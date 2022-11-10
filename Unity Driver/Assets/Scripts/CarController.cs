@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
-
 {
     private const float _maxSpeedForSmokeOnStart = 12f;
     private const float _minSpeedForSmokeOnStart = 3f;
@@ -27,7 +26,7 @@ public class CarController : MonoBehaviour
     public ButtonClickChecker UpArrow;
 
 
-    private void Start()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _rb.centerOfMass = _centerOfMass.localPosition;
@@ -61,14 +60,17 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        SmokeFromTiresOnStart();
         ApplyForceToMovementCar();
-        SteerHelpAssist();
+        AddSkidOffset();
+    }
+
+    private void Update()
+    {
+        SmokeFromTiresOnStart();
         NitroEffects();
         Speedometer();
     }
-   
-    
+
     private void ApplyForceToMovementCar()
     {
         if (_onGround)
@@ -77,7 +79,7 @@ public class CarController : MonoBehaviour
         }
     }
 
-    private void SteerHelpAssist()
+    private void AddSkidOffset()
     {
         if (!_onGround)
         {
