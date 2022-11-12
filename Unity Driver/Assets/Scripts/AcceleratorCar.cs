@@ -8,35 +8,34 @@ public class AcceleratorCar: MonoBehaviour
     [SerializeField] private ButtonClickChecker _upArrow;
     [SerializeField] private ButtonClickChecker _downArrow;
 
-    private float _valueForMovement;
+    public float ValueForMovement
+    {
+        get; private set;
+    }
 
    
     private void FixedUpdate()
     {
-
-        Debug.Log(Input.touchCount);
         if (_upArrow.IsDown)
         {
-            _valueForMovement = Mathf.Clamp(_valueForMovement + Time.fixedDeltaTime * _correctionValue, 0, 1);
-            _carController.CreateVectorForce(_valueForMovement);
+            ValueForMovement = Mathf.Clamp(ValueForMovement + Time.fixedDeltaTime * _correctionValue, 0, 1);
         }
         else if (_downArrow.IsDown)
         {
-            _valueForMovement = Mathf.Clamp(_valueForMovement - Time.fixedDeltaTime * _correctionValue, -1, 0);
-            _carController.CreateVectorForce(_valueForMovement);
+            ValueForMovement = Mathf.Clamp(ValueForMovement - Time.fixedDeltaTime * _correctionValue, -1, 0);
         }
-        else if(!_upArrow.IsDown && !_downArrow.IsDown)
+        else if (!_upArrow.IsDown && !_downArrow.IsDown)
         {
-            if (_valueForMovement > 0)
+            if (ValueForMovement > 0)
             {
-                _valueForMovement -= Time.fixedDeltaTime * _correctionValue;
+                ValueForMovement -= Time.fixedDeltaTime * _correctionValue;
             }
             else
             {
-                _valueForMovement += Time.fixedDeltaTime * _correctionValue;
+                ValueForMovement += Time.fixedDeltaTime * _correctionValue;
             }
 
-            _carController.CreateVectorForce(Input.GetAxis("Vertical"));
+            ValueForMovement = Input.GetAxis("Vertical");
         }
     }
 }

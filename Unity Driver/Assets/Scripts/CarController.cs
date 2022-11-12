@@ -17,10 +17,10 @@ public class CarController : MonoBehaviour
     [SerializeField] private GameObject _nitroEffects;
     [SerializeField] private Transform _centerOfMass;
     [SerializeField] private Text _speedometer;
+    [SerializeField] private AcceleratorCar _accelerator;
 
     private Rigidbody _rb;
     private float _lastRotationY;
-    private Vector3 _movementVector;
     private bool _onGround;
 
     public ButtonClickChecker UpArrow;
@@ -75,7 +75,7 @@ public class CarController : MonoBehaviour
     {
         if (_onGround)
         {
-            _rb.AddForce(_movementVector * _speed, ForceMode.Impulse);
+            _rb.AddForce(GetVectorForce(_accelerator.ValueForMovement) * _speed, ForceMode.Impulse);
         }
     }
 
@@ -143,7 +143,7 @@ public class CarController : MonoBehaviour
         _speedometer.text = speed.ToString();
     }
 
-    public void CreateVectorForce(float vertical)
+    private Vector3 GetVectorForce(float vertical)
     {
         float angelY = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;
         float angelZ = transform.rotation.eulerAngles.x * Mathf.Deg2Rad;
@@ -151,7 +151,7 @@ public class CarController : MonoBehaviour
         float sin = Mathf.Sin(angelY);
         float sinZ = Mathf.Sin(angelZ);
 
-        _movementVector = new Vector3(vertical * sin, -sinZ * vertical, vertical * cos);
+        return  new Vector3(vertical * sin, -sinZ * vertical, vertical * cos);
     }
 
     public void Rotation(float horizontal)

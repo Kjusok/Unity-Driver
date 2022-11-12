@@ -50,7 +50,6 @@ public class GameManager : MonoBehaviour
     {
         _instance = this;
 
-
         for ( int i = 0; i < _numberOFLaps; i++)
         {
             _linesOfLapsTimeTextList[i].SetActive(true);
