@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
     private const int _timeForRestartFinishTriger = 10;
+    private const int _indexCorrection = 2;
+
     private static GameManager _instance;
 
     public static GameManager Instance
@@ -22,23 +24,19 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Text _currentLapText;
     [SerializeField] private Text _currentTimeLapText;
-    [SerializeField] private Text _1stLapTimeText;
-    [SerializeField] private Text _2ndLapTimeText;
-    [SerializeField] private Text _3rdLapTimeText;
     [SerializeField] private Text _totalTimeText;
     [SerializeField] private Text _bestTimeText;
     [SerializeField] private GameObject _finishTriger;
     [SerializeField] private GameObject _menuPanel;
     [SerializeField] private GameObject _newBestText;
     [SerializeField] private GameObject _startButton;
-    [SerializeField] [Range(0, 6)] private int _numberOFLaps;
+    [SerializeField] [Range(1, 6)] private int _numberOFLaps;
+    [SerializeField] private List<Text> _lapsTimeTextList;
+    [SerializeField] private List<GameObject> _linesOfLapsTimeTextList;
 
-    [SerializeField] private List<float> _lapsTime;
+    private List<float> _lapsTimeList = new List<float>();
     private float _currentTimeLap;
     private float _currentLap;
-    private float _1stLapTime;
-    private float _2ndLapTime;
-    private float _3rdLapTime;
     private float _totalTime;
     private float _bestTime;
     private bool _isPaused;
@@ -47,14 +45,23 @@ public class GameManager : MonoBehaviour
 
     public bool GameIsPaused => _isPaused;
 
+
     private void Awake()
     {
         _instance = this;
+
+
+        for ( int i = 0; i < _numberOFLaps; i++)
+        {
+            _linesOfLapsTimeTextList[i].SetActive(true);
+        }
     }
 
     private void Start()
     {
         _bestTime = PlayerPrefs.GetFloat("bestTime");
+
+        _currentLapText.text = "0/" + _numberOFLaps.ToString();
 
         if (!_gameIsStarted)
         {
@@ -76,10 +83,10 @@ public class GameManager : MonoBehaviour
             EnebleFinishLine();
         }
 
-        if (_currentLap > 3)
+        if (_currentLap > _numberOFLaps)
         {
             _currentLapText.text = _numberOFLaps.ToString() + "/" + _numberOFLaps.ToString();
-            _currentTimeLapText.text = _3rdLapTimeText.text;
+            _currentTimeLapText.text = _lapsTimeTextList[(int)_currentLap - _indexCorrection].text;
 
             ActiveMenu();
         }
@@ -113,37 +120,20 @@ public class GameManager : MonoBehaviour
 
     private void RememberTimeOfEachLap()
     {
-        Debug.Log(_lapsTime[_lapsTime.Count-1]);
 
-        if (_currentLap == _lapsTime.Count)
+        if (_currentLap == _lapsTimeList.Count && _lapsTimeList.Count > 1)
         {
+            var time = _lapsTimeList[_lapsTimeList.Count - 1];
+            _totalTime += time;
 
+            UpdateTimeText(_lapsTimeTextList[(int)_currentLap - _indexCorrection], _currentTimeLap);
+
+            if (_currentLap > _numberOFLaps)
+            {
+                UpdateTimeText(_totalTimeText, _totalTime);
+                RememberBestTime();
+            }
         }
-
-        if (_currentLap == 2)
-        {
-            _1stLapTime = _currentTimeLap;
-            UpdateTimeText(_1stLapTimeText, _currentTimeLap);
-
-            _totalTime += _1stLapTime;
-        }
-        else if (_currentLap == 3)
-        {
-            _2ndLapTime = _currentTimeLap;
-            UpdateTimeText(_2ndLapTimeText, _currentTimeLap);
-
-            _totalTime += _2ndLapTime;
-        }
-        else if (_currentLap == 4)
-        {
-            _3rdLapTime = _currentTimeLap;
-            UpdateTimeText(_3rdLapTimeText, _currentTimeLap);
-
-            _totalTime += _3rdLapTime;
-            UpdateTimeText(_totalTimeText, _totalTime);
-            RememberBestTime();
-        }
-
     }
 
     private void EnebleFinishLine()
@@ -192,7 +182,7 @@ public class GameManager : MonoBehaviour
         _currentLap++;
         _currentLapText.text = _currentLap.ToString() + "/" + _numberOFLaps.ToString();
 
-        _lapsTime.Add(_currentTimeLap);
+        _lapsTimeList.Add(_currentTimeLap);
 
         RememberTimeOfEachLap();
 
