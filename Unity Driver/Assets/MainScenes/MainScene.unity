@@ -16757,7 +16757,7 @@ GameObject:
   - component: {fileID: 714298241}
   - component: {fileID: 714298243}
   - component: {fileID: 714298244}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DownArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17308,7 +17308,7 @@ GameObject:
   - component: {fileID: 756344379}
   - component: {fileID: 756344378}
   - component: {fileID: 756344380}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: JoyStick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30926,7 +30926,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 321, y: 0.00006485}
+  m_AnchoredPosition: {x: 321, y: 0}
   m_SizeDelta: {x: 310, y: 115}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1221811540
@@ -33256,6 +33256,8 @@ MonoBehaviour:
   _nitroEffects: {fileID: 812537815}
   _centerOfMass: {fileID: 1223504417}
   _speedometer: {fileID: 792450394}
+  _accelerator: {fileID: 1396531654}
+  _rotationValue: {fileID: 756344380}
   UpArrow: {fileID: 2113735960}
 --- !u!65 &1519727055
 BoxCollider:
@@ -46023,7 +46025,7 @@ GameObject:
   - component: {fileID: 1875516737}
   - component: {fileID: 1875516739}
   - component: {fileID: 1875516738}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: JoyStickPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48244,7 +48246,7 @@ MonoBehaviour:
   m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_DeselectOnBackgroundClick: 1
-  m_PointerBehavior: 1
+  m_PointerBehavior: 2
 --- !u!114 &2086331375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48428,7 +48430,7 @@ GameObject:
   - component: {fileID: 2113735956}
   - component: {fileID: 2113735959}
   - component: {fileID: 2113735960}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UpArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}

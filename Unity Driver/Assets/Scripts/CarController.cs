@@ -18,7 +18,8 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform _centerOfMass;
     [SerializeField] private Text _speedometer;
     [SerializeField] private AcceleratorCar _accelerator;
-
+    [SerializeField] private MobileJoystick _rotationValue;
+ 
     private Rigidbody _rb;
     private float _lastRotationY;
     private bool _onGround;
@@ -53,6 +54,18 @@ public class CarController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (GameManager.Instance.GameIsPaused)
+        {
+            return;
+        }
+
+        Rotation(_rotationValue.Value);
+        ApplyForceToMovementCar();
+        AddSkidOffset();
+    }
+
+    private void Update()
+    {
         EmitSmokeFromTires();
 
         if (GameManager.Instance.GameIsPaused)
@@ -60,12 +73,6 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        ApplyForceToMovementCar();
-        AddSkidOffset();
-    }
-
-    private void Update()
-    {
         SmokeFromTiresOnStart();
         NitroEffects();
         Speedometer();

@@ -20,18 +20,21 @@ public class MobileJoystick : MonoBehaviour, IPointerUpHandler, IDragHandler, IP
         return new Vector2(x, y);
     }
 
-    private void FixedUpdate()
+    public float Value
     {
-        if (_inputVector.x != 0 || _inputVector.y != 0)
+        get
         {
-            _carController.Rotation(_inputVector.x);
-        }
-        else
-        {
-            _carController.Rotation(Input.GetAxis("Horizontal"));
+            if (_inputVector.x != 0 || _inputVector.y != 0)
+            {
+                return _inputVector.x;
+            }
+            else
+            {
+                return Input.GetAxis("Horizontal");
+            }
         }
     }
-
+    
     public void OnPointerDown(PointerEventData eventData)
     {
     }

@@ -50,16 +50,16 @@ public class GameManager : MonoBehaviour
     {
         _instance = this;
 
-        for ( int i = 0; i < _numberOFLaps; i++)
+        for (int i = 0; i < _numberOFLaps; i++)
         {
             _linesOfLapsTimeTextList[i].SetActive(true);
         }
+
+        _bestTime = PlayerPrefs.GetFloat("bestTime");
     }
 
     private void Start()
     {
-        _bestTime = PlayerPrefs.GetFloat("bestTime");
-
         _currentLapText.text = "0/" + _numberOFLaps.ToString();
 
         if (!_gameIsStarted)
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
 
     private void RememberBestTime()
     {
-        if (_bestTime > _totalTime)
+        if (_bestTime > _totalTime || _bestTime == 0)
         {
             _newBestText.SetActive(true);
 
