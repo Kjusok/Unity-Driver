@@ -5,6 +5,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform _playerTarget;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _rotationSpeed;
+    [SerializeField] private GameManager _gameManager;
 
     private Quaternion _startRotation;
     private Vector3 _offset;
@@ -18,7 +19,7 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.Instance.GameIsPaused)
+        if (_gameManager.GameIsPaused)
         {
             return;
         }

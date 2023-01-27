@@ -8,20 +8,6 @@ public class GameManager : MonoBehaviour
     private const int _timeForRestartFinishTriger = 10;
     private const int _indexCorrection = 2;
 
-    private static GameManager _instance;
-
-    public static GameManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                Debug.LogError("Instance not specified");
-            }
-            return _instance;
-        }
-    }
-
     [SerializeField] private Text _currentLapText;
     [SerializeField] private Text _currentTimeLapText;
     [SerializeField] private Text _totalTimeText;
@@ -48,8 +34,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _instance = this;
-
         for (int i = 0; i < _numberOFLaps; i++)
         {
             _linesOfLapsTimeTextList[i].SetActive(true);
@@ -154,14 +138,6 @@ public class GameManager : MonoBehaviour
         float milliseconds = (time * 1000f) % 1000;
 
         text.text = minutes.ToString("00") + ":" + seconds.ToString("00") + ":" + milliseconds.ToString("000");
-    }
-
-    private void OnDestroy()
-    {
-        if (_instance == this)
-        {
-            _instance = null;
-        }
     }
 
     public void PressRestartButton()

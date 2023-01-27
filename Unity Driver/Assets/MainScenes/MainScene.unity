@@ -28943,6 +28943,7 @@ MonoBehaviour:
   _playerTarget: {fileID: 1519727053}
   _moveSpeed: 20
   _rotationSpeed: 10
+  _gameManager: {fileID: 1016618254}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33258,6 +33259,7 @@ MonoBehaviour:
   _speedometer: {fileID: 792450394}
   _accelerator: {fileID: 1396531654}
   _rotationValue: {fileID: 756344380}
+  _gameManager: {fileID: 1016618254}
   UpArrow: {fileID: 2113735960}
 --- !u!65 &1519727055
 BoxCollider:
