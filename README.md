@@ -4,7 +4,7 @@
 
  **Tech stack:** 3D Physics, Car physics, 3D models, FX, Patterns (singleton), Resolving dependencies, Using asset store, Event system.
 
- **Platform:** PC, Android 
+ **Platform:** PC(Editor), Android 
 
  **Link to gameplay example video:** https://www.youtube.com/watch?v=bNyg2-D1W4Q
 
